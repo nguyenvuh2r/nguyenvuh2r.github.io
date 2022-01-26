@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>A Basic HTML5 Template</title>
+        <meta name="description" content="A simple HTML5 Template for new projects.">
+        <meta name="author" content="SitePoint">
+        <meta property="og:title" content="A Basic HTML5 Template">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://www.sitepoint.com/a-basic-html5-template/">
+        <meta property="og:description" content="A simple HTML5 Template for new projects.">
+        <meta property="og:image" content="image.png">
+
+        <link rel="icon" href="/favicon.ico">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                margin: 0;
+            }
+
+            #container {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="container"></div>
+
+        <script src="assets/js/three.min.js"></script>
+        <script src="assets/js/panolens.min.js"></script>
+        <script>
+            var panorama, viewer, container, infospot, infospot2, textureLoader, tex1, tex2;
+
+            container = document.querySelector( '#container' );
+            textureLoader = new THREE.TextureLoader();
+            tex1 = textureLoader.load( 'https://images-na.ssl-images-amazon.com/images/I/61mtx+420hL._AC_US436_QL65_.jpg' );
+            tex2 = textureLoader.load( 'https://images-na.ssl-images-amazon.com/images/I/61-eBnYjM9L._AC_US436_QL65_.jpg' );
+
+
+            panorama = new PANOLENS.ImagePanorama( 'assets/img/image_panorama.jpg' );
+
+            // Default infospot
+            infospot = new PANOLENS.Infospot( 
+            600, 
+            "https://images-na.ssl-images-amazon.com/images/I/61mtx+420hL._AC_US436_QL65_.jpg"
+            );
+
+            infospot.position.set( 1000, 100, -2000 );
+            infospot.addHoverText( "Default Infospot", 100 );
+            infospot.addEventListener( "click", function(){
+            this.focus();
+            } );
+
+            // Custom infospot
+            infospot2 = new PANOLENS.Infospot( 
+            600, 
+            "https://images-na.ssl-images-amazon.com/images/I/61mtx+420hL._AC_US436_QL65_.jpg", false
+            );
+
+            infospot2.material.rotation = 30 * Math.PI / 180;
+            infospot2.position.set( -2000, 100, -2000 );
+            infospot2.addHoverText( "Custom Infospot", 80 );
+            infospot2.addEventListener( "click", function(){
+            this.focus();
+            } );
+            infospot2.addEventListener( 'hoverenter', function( event ){
+            this.material.opacity = 0.6;
+            this.material.color.set( 0x00ff00 * Math.random() );
+            this.material.map = tex2;
+            this.scale.x *= 2;
+            this.scale.y *= 2;
+            } );
+            infospot2.addEventListener( 'hoverleave', function( event ){
+            this.material.opacity = 1;
+            this.material.color.set( 0xffffff );
+            this.material.map = tex1;
+            this.scale.x /= 2;
+            this.scale.y /= 2;
+            } );
+
+            panorama.add( infospot, infospot2 );
+
+            viewer = new PANOLENS.Viewer( { container: container, output: 'console' } );
+            viewer.add( panorama );
+        </script>
+    </body>
+</html>
